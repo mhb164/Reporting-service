@@ -1,0 +1,23 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+	<PropertyGroup>
+		<AssemblyName>Reporting</AssemblyName>
+		<AssemblyTitle>$(AssemblyName) $(AssemblyTitleSufix)</AssemblyTitle>
+	</PropertyGroup>
+
+	<PropertyGroup>
+		<PackageTags>BBC3D940-19E1-408F-9A82-DCC9D60324D1</PackageTags>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<PackageReference Include="Serilog" Version="4.2.0" />
+		<PackageReference Include="Serilog.AspNetCore" Version="9.0.0" />
+		<PackageReference Include="Serilog.Sinks.File" Version="6.0.0" />
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Reporting.Core\Reporting.Core.csproj" />
+	  <ProjectReference Include="..\Reporting.Infra.Sql\Reporting.Infra.Sql.csproj" />
+	  <ProjectReference Include="..\Reporting.Infra\Reporting.Infra.csproj" />
+	</ItemGroup>
+</Project>
