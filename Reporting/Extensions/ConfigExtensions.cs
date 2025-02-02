@@ -27,7 +27,7 @@ public static class ConfigExtensions
             Directory.CreateDirectory(resolvedLoggingDirectory);
 
         Log.Logger = new LoggerConfiguration()
-            .MinimumLevel.Verbose()
+            .MinimumLevel.Information()
             .MinimumLevel.Override("Microsoft", LogEventLevel.Warning)
             .WriteTo.File($"{resolvedLoggingDirectory}\\Logs-.log",
                           rollingInterval: RollingInterval.Day,
@@ -47,6 +47,7 @@ public static class ConfigExtensions
     public static IServiceCollection ProvideConfigs(this IServiceCollection services, IConfiguration configuration)
     {
         services.Configure<RepositoryOptions>(configuration.GetSection(RepositoryOptions.ConfigName));
+        services.Configure<List<ApiKeyAuthenticationOptions>>(configuration.GetSection(ApiKeyAuthenticationOptions.ConfigName));
 
         return services;
     }

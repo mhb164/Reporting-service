@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tizpusoft.Reporting;
 
@@ -11,9 +12,11 @@ using Tizpusoft.Reporting;
 namespace Tizpusoft.Reporting.Migrations
 {
     [DbContext(typeof(ReportingSqlContext))]
-    partial class ReportingSqlContextModelSnapshot : ModelSnapshot
+    [Migration("20250201150820_AddReporter")]
+    partial class AddReporter
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -105,7 +108,7 @@ namespace Tizpusoft.Reporting.Migrations
 
                     b.HasKey("Id");
 
-                    b.ToTable("Reporters");
+                    b.ToTable("Reporter");
                 });
 
             modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportDetail", b =>

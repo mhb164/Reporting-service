@@ -14,7 +14,7 @@ Serilog.Log.Information("{ProductName} v{AppInformationalVersion} started.", Aid
 builder.Services.ProvideConfigs(builder.Configuration);
 builder.WebHost.ConfigWebHost(builder.Configuration.GetSection(WebHostingOptions.ConfigName)?.Get<WebHostingOptions>());
 
-builder.Services.ProvideServices();
+builder.Services.ProvideServices(builder.Configuration);
 
 var app = builder.Build();
 

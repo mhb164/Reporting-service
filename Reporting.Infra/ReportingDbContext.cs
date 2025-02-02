@@ -1,24 +1,22 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using Microsoft.Extensions.Options;
 using Tizpusoft.Reporting.Model;
-using Tizpusoft.Reporting.Options;
 
 namespace Tizpusoft.Reporting;
 
-public abstract class ReportingDbContext : DbContext, IReportingRepository
+public abstract class ReportingDbContext : DbContext
 {
-    protected readonly RepositoryOptions _options;
+    protected readonly string _connectionString;
     protected readonly ILogger? _logger;
 
     public ReportingDbContext() { }
-    public ReportingDbContext(ILogger<ReportingDbContext>? logger,
-            IOptions<RepositoryOptions>? options): base()
+    public ReportingDbContext(ILogger<ReportingDbContext>? logger, string? connectionString) : base()
     {
         _logger = logger;
-        _options = options!.Value!;
+        _connectionString = connectionString ?? throw new ArgumentNullException(nameof(connectionString));
     }
 
+    public DbSet<Reporter> Reporters { get; set; }
     public DbSet<ReportSource> Sources { get; set; }
     public DbSet<ReportSection> Sections { get; set; }
     public DbSet<ReportDetail> Details { get; set; }
