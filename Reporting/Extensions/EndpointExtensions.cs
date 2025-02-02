@@ -30,7 +30,7 @@ public static class EndpointExtensions
             var reporterName = await GetApiClientNameAsync(httpContext, apiKeyAuthenticationService);
             if (reporterName is null)
                 return Results.Unauthorized();
-
+           
             var result = await service.RegisterAsync(reporterName, request, cancellationToken);
 
             if (result.Success)
@@ -64,8 +64,8 @@ public static class EndpointExtensions
 
             if (latestDetails?.Data is not null)
             {
-                var bySource = latestDetails.Data.GroupBy(x => x.Source);
-                foreach (var group in bySource.OrderBy(x => x.Key))
+                var bySourceSection = latestDetails.Data.GroupBy(x => $"{x.Source}-{x.Section}");
+                foreach (var group in bySourceSection.OrderBy(x => x.Key))
                 {
                     report.AppendLine($"* {group.Key}");
                     foreach (var item in group.OrderBy(x => x.Time))
