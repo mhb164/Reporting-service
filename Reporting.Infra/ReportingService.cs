@@ -36,12 +36,12 @@ public class ReportingService : IReportingService
             return ServiceResponse<ReportDetail>.Failed("Text is not set!");
 
         var reporter = await _repository.GetReporterAsync(reporterName, true);
-        var section = await _repository.GetSectionAsync(request.Source, request.Section, true);
+        var sourceSection = await _repository.GetSourceSectionAsync(request.Source, request.Section, true);
 
         var details = new ReportDetail()
         {
             Reporter = reporter,
-            Section = section,
+            SourceSection = sourceSection,
             Time = request.Time,
             Topic = request.Topic,
             TraceKey = request.TraceKey,

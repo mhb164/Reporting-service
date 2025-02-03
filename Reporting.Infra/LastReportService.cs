@@ -79,7 +79,7 @@ public class LastReportService : ILastReportService
 
     private void AddWithoutLock(ReportDetail item)
     {
-        var key = $"{item.Section.Source.Name}.{item.Section.Name}.{item.Topic}";
+        var key = $"{item.SourceSection.Source}.{item.SourceSection.Section}.{item.Topic}";
         if (!_lastDetail.TryGetValue(key, out var existing))
         {
             _lastDetail.Add(key, item);

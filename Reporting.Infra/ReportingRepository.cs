@@ -29,33 +29,10 @@ public class ReportingRepository : IReportingRepository
         return reporter;
     }
 
-    public async Task<ReportSection?> GetSectionAsync(string sourceName, string sectionName, bool create)
+    public async Task<ReportSourceSection?> GetSourceSectionAsync(string sourceName, string sectionName, bool create)
     {
-        var source = await GetSourceAsync(sourceName, create);
-
-        if (source is null)
-            return null;
-
-        var section = source.Sections.SingleOrDefault(x => x.Name == sectionName);
-
-        if (section is not null)
-            return section;
-
-        if (!create)
-            return null;
-
-        section = new ReportSection() { Name = sectionName, Details = new List<ReportDetail>() };
-        source.Sections.Add(section);
-        await _context.SaveChangesAsync();
-
-        return section;
-    }
-
-    private async Task<ReportSource?> GetSourceAsync(string sourceName, bool create)
-    {
-        var source = await _context.Sources
-            .Include(x => x.Sections)
-            .SingleOrDefaultAsync(x => x.Name == sourceName);
+        var source = await _context.SourceSections
+            .SingleOrDefaultAsync(x => x.Source == sourceName && x.Section == sectionName);
 
         if (source is not null)
             return source;
@@ -63,8 +40,8 @@ public class ReportingRepository : IReportingRepository
         if (!create)
             return null;
 
-        source = new ReportSource() { Name = sourceName, Sections = new List<ReportSection>() };
-        await _context.Sources.AddAsync(source);
+        source = new ReportSourceSection() { Source = sourceName, Section = sectionName };
+        await _context.SourceSections.AddAsync(source);
         await _context.SaveChangesAsync();
 
         return source;
@@ -81,8 +58,7 @@ public class ReportingRepository : IReportingRepository
     {
         var groups = await _context.Details
             .Include(x => x.Reporter)
-            .Include(x => x.Section)
-            .Include(x => x.Section.Source)
+            .Include(x => x.SourceSection)
             .Include(x => x.Reporter)
             .GroupBy(x => x.Topic)
             .Select(group => new

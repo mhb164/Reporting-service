@@ -1,9 +1,10 @@
 ﻿namespace Tizpusoft.Reporting.Model;
 
-public class ReportSource
+public class ReportSourceSection
 {
     public Guid Id { get; set; }
-    public string Name { get; set; }
+    public string Source { get; set; }
+    public string Section { get; set; }
 
-    public List<ReportSection> Sections { get; set; }
+    public List<ReportDetail> Details { get; set; }
 }

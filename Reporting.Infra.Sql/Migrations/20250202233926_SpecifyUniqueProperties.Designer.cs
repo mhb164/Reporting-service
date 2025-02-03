@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Tizpusoft.Reporting;
 
@@ -11,9 +12,11 @@ using Tizpusoft.Reporting;
 namespace Tizpusoft.Reporting.Migrations
 {
     [DbContext(typeof(ReportingSqlContext))]
-    partial class ReportingSqlContextModelSnapshot : ModelSnapshot
+    [Migration("20250202233926_SpecifyUniqueProperties")]
+    partial class SpecifyUniqueProperties
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -31,7 +34,7 @@ namespace Tizpusoft.Reporting.Migrations
                     b.Property<Guid>("ReporterId")
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("SourceSectionId")
+                    b.Property<Guid>("SectionId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("Text")
@@ -53,31 +56,50 @@ namespace Tizpusoft.Reporting.Migrations
 
                     b.HasIndex("ReporterId");
 
-                    b.HasIndex("SourceSectionId");
+                    b.HasIndex("SectionId");
 
                     b.ToTable("Details");
                 });
 
-            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSourceSection", b =>
+            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSection", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<string>("Section")
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
-                    b.Property<string>("Source")
+                    b.Property<Guid>("SourceId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.HasIndex("SourceId");
+
+                    b.ToTable("Sections");
+                });
+
+            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSource", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(450)");
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Source", "Section")
+                    b.HasIndex("Name")
                         .IsUnique();
 
-                    b.ToTable("SourceSections");
+                    b.ToTable("Sources");
                 });
 
             modelBuilder.Entity("Tizpusoft.Reporting.Model.Reporter", b =>
@@ -106,20 +128,36 @@ namespace Tizpusoft.Reporting.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("Tizpusoft.Reporting.Model.ReportSourceSection", "SourceSection")
+                    b.HasOne("Tizpusoft.Reporting.Model.ReportSection", "Section")
                         .WithMany("Details")
-                        .HasForeignKey("SourceSectionId")
+                        .HasForeignKey("SectionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
                     b.Navigation("Reporter");
 
-                    b.Navigation("SourceSection");
+                    b.Navigation("Section");
                 });
 
-            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSourceSection", b =>
+            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSection", b =>
+                {
+                    b.HasOne("Tizpusoft.Reporting.Model.ReportSource", "Source")
+                        .WithMany("Sections")
+                        .HasForeignKey("SourceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Source");
+                });
+
+            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSection", b =>
                 {
                     b.Navigation("Details");
+                });
+
+            modelBuilder.Entity("Tizpusoft.Reporting.Model.ReportSource", b =>
+                {
+                    b.Navigation("Sections");
                 });
 #pragma warning restore 612, 618
         }
