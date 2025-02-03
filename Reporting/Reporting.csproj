@@ -7,7 +7,12 @@
 
 	<PropertyGroup>
 		<PackageTags>BBC3D940-19E1-408F-9A82-DCC9D60324D1</PackageTags>
+		<ApplicationIcon>reporting.ico</ApplicationIcon>
 	</PropertyGroup>
+
+	<ItemGroup>
+	  <Content Include="reporting.ico" />
+	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.2.0" />
