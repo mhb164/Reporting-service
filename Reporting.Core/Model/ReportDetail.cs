@@ -10,6 +10,9 @@ public class ReportDetail
     public string TraceKey { get; set; }
     public string Text { get; set; }
 
+    public Guid SourceSectionId { get; set; }
+    public Guid ReporterId { get; set; }
+
     public ReportSourceSection SourceSection { get; set; }
     public Reporter Reporter { get; set; }
 

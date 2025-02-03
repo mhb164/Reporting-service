@@ -35,24 +35,33 @@ public class ReportingService : IReportingService
         if (string.IsNullOrWhiteSpace(request.Text))
             return ServiceResponse<ReportDetail>.Failed("Text is not set!");
 
-        var reporter = await _repository.GetReporterAsync(reporterName, true);
-        var sourceSection = await _repository.GetSourceSectionAsync(request.Source, request.Section, true);
-
-        var details = new ReportDetail()
+        try
         {
-            Reporter = reporter,
-            SourceSection = sourceSection,
-            Time = request.Time,
-            Topic = request.Topic,
-            TraceKey = request.TraceKey,
-            Text = request.Text,
-        };
+            var reporter = await _repository.GetReporterAsync(reporterName, true);
+            var sourceSection = await _repository.GetSourceSectionAsync(request.Source, request.Section, true);
 
-        details = await _repository.AddAsync(details);
-        if (details is null)
+            var details = new ReportDetail()
+            {
+                ReporterId = reporter.Id,
+                SourceSectionId = sourceSection.Id,
+                Time = request.Time,
+                Topic = request.Topic,
+                TraceKey = request.TraceKey,
+                Text = request.Text,
+            };
+
+            details = await _repository.AddAsync(details);
+            if (details is null)
+                return ServiceResponse<ReportDetail>.Failed("Error");
+
+            _lastReports.Update(details);
+            return ServiceResponse<ReportDetail>.Ok(details, "OK");
+        }
+        catch (Exception ex)
+        {
+            _logger?.LogError(ex, "Error on RegisterAsync");
             return ServiceResponse<ReportDetail>.Failed("Error");
 
-        _lastReports.Update(details);
-        return ServiceResponse<ReportDetail>.Ok(details, "OK");
+        }
     }
 }
