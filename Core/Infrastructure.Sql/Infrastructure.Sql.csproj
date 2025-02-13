@@ -1,14 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
 	<PropertyGroup>
-		<AssemblyName>Reporting.Infra.Sql</AssemblyName>
+		<AssemblyName>Reporting.Infrastructure.Sql</AssemblyName>
 		<AssemblyTitle>$(AssemblyName) $(AssemblyTitleSufix)</AssemblyTitle>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <ProjectReference Include="..\Reporting.Core\Reporting.Core.csproj" />
-	  <ProjectReference Include="..\Reporting.Infra\Reporting.Infra.csproj" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.1" />
@@ -17,6 +12,11 @@
 			<PrivateAssets>all</PrivateAssets>
 			<IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
 		</PackageReference>
+	</ItemGroup>
+
+	<ItemGroup>
+	  <ProjectReference Include="..\Domain\Domain.csproj" />
+	  <ProjectReference Include="..\Infrastructure\Infrastructure.csproj" />
 	</ItemGroup>
 	
 </Project>

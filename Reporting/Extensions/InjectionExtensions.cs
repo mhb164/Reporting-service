@@ -1,4 +1,12 @@
-﻿using Tizpusoft.Reporting.Options;
+﻿
+using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Options;
+using Tizpusoft.Reporting.Interfaces;
+using Tizpusoft.Reporting.Middleware;
+using Tizpusoft.Reporting.Options;
+using Tizpusoft.Reporting.Repositories;
+using static System.Formats.Asn1.AsnWriter;
 
 namespace Tizpusoft.Reporting;
 
@@ -17,7 +25,10 @@ public static class InjectionExtensions
 
         ConfigureReportingDbContext(services, configuration);
 
+        services.AddSingleton<IApiContext, ApiContext>();
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<List<ApiKeyAuthenticationOptions>>>().Value.Select(x => x.ToModel()));
         services.AddSingleton<IApiKeyAuthenticationService, ApiKeyAuthenticationService>();
+        
         services.AddSingleton<ILastReportService, LastReportService>();
         services.AddScoped<IReportingService, ReportingService>();
         services.AddScoped<IReportingRepository, ReportingRepository>();

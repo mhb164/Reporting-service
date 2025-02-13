@@ -1,4 +1,6 @@
-﻿namespace Tizpusoft.Reporting.Options;
+﻿using Tizpusoft.Reporting.Model;
+
+namespace Tizpusoft.Reporting.Options;
 
 public class ApiKeyAuthenticationOptions
 {
@@ -6,4 +8,7 @@ public class ApiKeyAuthenticationOptions
 
     public string Name { get; set; }
     public string ApiKey { get; set; }
+
+    public ApiAuthentication ToModel()
+      => new ApiAuthentication(Name, ApiKey);
 }

@@ -1,10 +1,10 @@
 ﻿using Tizpusoft.Reporting.Dto;
 using Tizpusoft.Reporting.Model;
 
-namespace Tizpusoft.Reporting;
+namespace Tizpusoft.Reporting.Interfaces;
 
 public interface ILastReportService
 {
-    Task<ServiceResponse<List<ReportDetailDto>>> GetLatestDetailsAsync();
+    Task<ServiceResult<List<ReportDetailDto>>> GetLatestDetailsAsync();
     void Update(ReportDetail details);
 }

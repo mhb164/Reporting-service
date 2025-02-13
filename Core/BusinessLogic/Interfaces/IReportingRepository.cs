@@ -1,6 +1,6 @@
 ﻿using Tizpusoft.Reporting.Model;
 
-namespace Tizpusoft.Reporting;
+namespace Tizpusoft.Reporting.Interfaces;
 
 public interface IReportingRepository
 {

@@ -1,6 +1,4 @@
-﻿using Tizpusoft.Reporting.Dto;
-
-namespace Tizpusoft.Reporting.Model;
+﻿namespace Tizpusoft.Reporting.Model;
 
 public class ReportDetail
 {
@@ -19,6 +17,5 @@ public class ReportDetail
 
     public override string ToString() => $"{Time:yyyy-MM-dd HH:mm:ss.fff zzz} [Topic:{Topic}] [TraceKey:{TraceKey}] [Text:{Text}]";
 
-    public ReportDetailDto ToDto()
-        => new ReportDetailDto(Id, Time, SourceSection?.Source, SourceSection?.Section, Reporter?.Name, Topic, TraceKey, Text);
+ 
 }

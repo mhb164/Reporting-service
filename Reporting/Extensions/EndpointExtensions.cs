@@ -1,14 +1,27 @@
 ﻿using System.Text;
+using Tizpusoft.Reporting.Auth;
 using Tizpusoft.Reporting.Dto;
+using Tizpusoft.Reporting.Interfaces;
 
 namespace Tizpusoft.Reporting;
 
 public static class EndpointExtensions
 {
+    private static IResult Map<T>(this ServiceResult<T> result) => result.Code switch
+    {
+        ServiceResultCode.Success => Results.Json(result.Value),
+        _ => ErrorResponse.Generate(result),
+    };
+
+    private static IResult Map(this ServiceResult result) => result.Code switch
+    {
+        ServiceResultCode.Success => Results.Ok(),
+        _ => ErrorResponse.Generate(result),
+    };
+
     public static IEndpointRouteBuilder MapEndpoints(this IEndpointRouteBuilder endpoints)
         => endpoints.MapGeneralEndpoints()
                     .MapRegisterEndpoints();
-
 
     public static IEndpointRouteBuilder MapGeneralEndpoints(this IEndpointRouteBuilder endpoints)
     {
@@ -18,40 +31,7 @@ public static class EndpointExtensions
             info.AppendLine($"{Aid.ProductName} v{Aid.AppInformationalVersion} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
 
             return Results.Content(info.ToString(), "text/plain");
-        });
-
-        return endpoints;
-    }
-
-    public static IEndpointRouteBuilder MapRegisterEndpoints(this IEndpointRouteBuilder endpoints)
-    {
-        endpoints.MapPost("/api/Register", static async (HttpContext httpContext, RegisterReportRequest request, IApiKeyAuthenticationService apiKeyAuthenticationService, IReportingService service, CancellationToken cancellationToken) =>
-        {
-            var reporterName = await GetApiClientNameAsync(httpContext, apiKeyAuthenticationService);
-            if (reporterName is null)
-                return Results.Unauthorized();
-           
-            var result = await service.RegisterAsync(reporterName, request, cancellationToken);
-
-            if (result.Success)
-                return Results.Ok(result.Message);
-            else
-                return Results.Problem(result.Message);
-        });
-
-        endpoints.MapGet("/api/Latest", async (HttpContext httpContext, ILastReportService service, IApiKeyAuthenticationService apiKeyAuthenticationService, CancellationToken cancellationToken) =>
-        {
-            var reporterName = await GetApiClientNameAsync(httpContext, apiKeyAuthenticationService);
-            if (reporterName is null)
-                return Results.Unauthorized();
-
-            var result = await service.GetLatestDetailsAsync();
-
-            if (result.Success)
-                return Results.Json(result.Data);
-            else
-                return Results.Problem(result.Message);
-        });
+        }).WithMetadata(new PublicMetadata());
 
         endpoints.MapGet("/Latest", static async (HttpContext httpContext, ILastReportService service, CancellationToken cancellationToken) =>
         {
@@ -62,9 +42,9 @@ public static class EndpointExtensions
             report.AppendLine($"System Memory: {Aid.GetSystemMemoryText()}, Process Usage: {Aid.GetProcessUsageText()}");
             report.AppendLine("");
 
-            if (latestDetails?.Data is not null)
+            if (latestDetails?.Value is not null)
             {
-                var bySourceSection = latestDetails.Data.GroupBy(x => $"{x.Source}-{x.Section}");
+                var bySourceSection = latestDetails.Value.GroupBy(x => $"{x.Source}-{x.Section}");
                 foreach (var group in bySourceSection.OrderBy(x => x.Key))
                 {
                     report.AppendLine($"* {group.Key}");
@@ -76,7 +56,21 @@ public static class EndpointExtensions
             }
 
             return Results.Content(report.ToString(), "text/plain");
-        });
+        }).WithMetadata(new PublicMetadata());
+        return endpoints;
+    }
+
+    public static IEndpointRouteBuilder MapRegisterEndpoints(this IEndpointRouteBuilder endpoints)
+    {
+        endpoints.MapPost("/api/Register", 
+            static async (RegisterReportRequest request, IReportingService service, CancellationToken cancellationToken) 
+                => Map(await service.RegisterAsync(request, cancellationToken)))
+            .WithMetadata(new PrivateMetadata(apiClientPermitted: true));
+
+        endpoints.MapGet("/api/Latest", 
+                async (ILastReportService service, CancellationToken cancellationToken)
+                    => Map(await service.GetLatestDetailsAsync()))
+            .WithMetadata(new PrivateMetadata(apiClientPermitted: true));
 
         return endpoints;
     }

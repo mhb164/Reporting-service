@@ -2,6 +2,7 @@
 using Microsoft.Extensions.Logging;
 using System.Diagnostics;
 using Tizpusoft.Reporting.Dto;
+using Tizpusoft.Reporting.Interfaces;
 using Tizpusoft.Reporting.Model;
 
 namespace Tizpusoft.Reporting;
@@ -25,14 +26,14 @@ public class LastReportService : ILastReportService
     private readonly object _rebuildLock = new object();
     private bool _rebuilding = false;
 
-    private async Task<ServiceResponse> Rebuild()
+    private async Task<ServiceResult> Rebuild()
     {
         lock (_rebuildLock)
         {
             if (_rebuilding)
             {
                 _logger?.LogWarning("[LAST] Rebuild requested, but is in progress!");
-                return ServiceResponse.Failed($"Rebuild in progress!");
+                return ServiceResult.BadRequest($"Rebuild in progress!");
             }
 
             _rebuilding = true;
@@ -40,7 +41,7 @@ public class LastReportService : ILastReportService
 
         _logger?.LogInformation("[LAST] Start rebuild requested.");
         new Thread(RebuildUnsafe) { IsBackground = true, Name = "Rebuild" }.Start();
-        return ServiceResponse.Ok($"Rebuild started.");
+        return ServiceResult.Success();
     }
 
     private void RebuildUnsafe()
@@ -105,11 +106,11 @@ public class LastReportService : ILastReportService
         });
     }
 
-    public async Task<ServiceResponse<List<ReportDetailDto>>> GetLatestDetailsAsync()
+    public async Task<ServiceResult<List<ReportDetailDto>>> GetLatestDetailsAsync()
     {
         await Task.CompletedTask;
 
         var result = _changeLock.Read(() => _lastDetail.Values.Select(x => x.ToDto()).ToList());
-        return ServiceResponse<List<ReportDetailDto>>.Ok(result);
+        return ServiceResult.Success(result);
     }
 }

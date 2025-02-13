@@ -7,12 +7,8 @@
 
 	<PropertyGroup>
 		<PackageTags>BBC3D940-19E1-408F-9A82-DCC9D60324D1</PackageTags>
-		<ApplicationIcon>reporting.ico</ApplicationIcon>
+		<ApplicationIcon>..\reporting.ico</ApplicationIcon>
 	</PropertyGroup>
-
-	<ItemGroup>
-	  <Content Include="reporting.ico" />
-	</ItemGroup>
 
 	<ItemGroup>
 		<PackageReference Include="Serilog" Version="4.2.0" />
@@ -21,8 +17,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
-	  <ProjectReference Include="..\Reporting.Core\Reporting.Core.csproj" />
-	  <ProjectReference Include="..\Reporting.Infra.Sql\Reporting.Infra.Sql.csproj" />
-	  <ProjectReference Include="..\Reporting.Infra\Reporting.Infra.csproj" />
+	  <ProjectReference Include="..\Core\BusinessLogic\BusinessLogic.csproj" />
+	  <ProjectReference Include="..\Core\Domain\Domain.csproj" />
+	  <ProjectReference Include="..\Core\Infrastructure.Sql\Infrastructure.Sql.csproj" />
+	  <ProjectReference Include="..\Core\Infrastructure\Infrastructure.csproj" />
 	</ItemGroup>
 </Project>

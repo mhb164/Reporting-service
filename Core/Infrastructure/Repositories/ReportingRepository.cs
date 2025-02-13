@@ -1,9 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
-using System.Diagnostics;
+using Tizpusoft.Reporting.Interfaces;
 using Tizpusoft.Reporting.Model;
 
-namespace Tizpusoft.Reporting;
+namespace Tizpusoft.Reporting.Repositories;
 
 public class ReportingRepository : IReportingRepository
 {
