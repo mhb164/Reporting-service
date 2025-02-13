@@ -108,7 +108,7 @@ public class ReportingRepository : IReportingRepository
             .Include(x => x.Reporter)
             .Include(x => x.SourceSection)
             .Include(x => x.Reporter)
-            .GroupBy(x => x.Topic)
+            .GroupBy(x => new { x.Topic, x.SourceSection.Section })
             .Select(group => new
             {
                 Name = group.Key,
