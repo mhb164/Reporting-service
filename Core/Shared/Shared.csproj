@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<LangVersion>12.0</LangVersion>
+
+		<AssemblyName>Reporting.Shared</AssemblyName>
+		<AssemblyTitle>$(AssemblyName) $(AssemblyTitleSufix)</AssemblyTitle>
+
+		<RootNamespace>Tizpusoft</RootNamespace>
+	</PropertyGroup>
+
+</Project>

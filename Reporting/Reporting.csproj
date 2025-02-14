@@ -21,5 +21,6 @@
 	  <ProjectReference Include="..\Core\Domain\Domain.csproj" />
 	  <ProjectReference Include="..\Core\Infrastructure.Sql\Infrastructure.Sql.csproj" />
 	  <ProjectReference Include="..\Core\Infrastructure\Infrastructure.csproj" />
+	  <ProjectReference Include="..\Core\Shared\Shared.csproj" />
 	</ItemGroup>
 </Project>

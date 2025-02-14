@@ -1,4 +1,4 @@
-﻿namespace Tizpusoft.Reporting;
+﻿namespace Tizpusoft;
 
 public class ServiceResult
 {
