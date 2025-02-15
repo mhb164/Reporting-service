@@ -30,6 +30,12 @@ public class ServiceResult
     public static ServiceResult BadRequest(string message) => Failed(ServiceResultCode.BadRequest, message);
     public static ServiceResult<T> BadRequest<T>(string message) => new ServiceResult<T>().BadRequest(message);
 
+    public static ServiceResult Unauthorized(string message) => Failed(ServiceResultCode.Unauthorized, message);
+    public static ServiceResult<T> Unauthorized<T>(string message) => new ServiceResult<T>().Unauthorized(message);
+
+    public static ServiceResult Forbidden(string message) => Failed(ServiceResultCode.Forbidden, message);
+    public static ServiceResult<T> Forbidden<T>(string message) => new ServiceResult<T>().Forbidden(message);
+
     public static ServiceResult NotFound(string message) => Failed(ServiceResultCode.NotFound, message);
     public static ServiceResult<T> NotFound<T>(string message) => new ServiceResult<T>().NotFound(message);
 

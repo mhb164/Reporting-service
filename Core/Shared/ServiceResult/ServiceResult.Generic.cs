@@ -39,6 +39,8 @@ public class ServiceResult<T>
     }
 
     public ServiceResult<T> BadRequest(string message) => Failed(ServiceResultCode.BadRequest, message);
+    public ServiceResult<T> Unauthorized(string message) => Failed(ServiceResultCode.Unauthorized, message);
+    public ServiceResult<T> Forbidden(string message) => Failed(ServiceResultCode.Forbidden, message);
     public ServiceResult<T> NotFound(string message) => Failed(ServiceResultCode.NotFound, message);
     public ServiceResult<T> Conflict(string message) => Failed(ServiceResultCode.Conflict, message);
     public ServiceResult<T> NotImplemented(string message) => Failed(ServiceResultCode.NotImplemented, message);

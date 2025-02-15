@@ -48,6 +48,7 @@ public static class ConfigExtensions
     {
         services.Configure<RepositoryOptions>(configuration.GetSection(RepositoryOptions.ConfigName));
         services.Configure<List<ApiKeyAuthenticationOptions>>(configuration.GetSection(ApiKeyAuthenticationOptions.ConfigName));
+        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.ConfigName));
 
         return services;
     }

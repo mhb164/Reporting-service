@@ -25,11 +25,15 @@ public static class InjectionExtensions
 
         ConfigureReportingDbContext(services, configuration);
 
-        services.AddSingleton<IApiContext, ApiContext>();
+        services.AddScoped<IApiContext, ApiContext>();
+        services.AddScoped<IUserContext, UserContext>();
+
         services.AddSingleton(sp => sp.GetRequiredService<IOptions<List<ApiKeyAuthenticationOptions>>>().Value.Select(x => x.ToModel()));
-        services.AddSingleton<IApiKeyAuthenticationService, ApiKeyAuthenticationService>();
-        
+        services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtOptions>>().Value.ToModel());
+
+        services.AddSingleton<IApiKeyAuthenticationService, ApiKeyAuthenticationService>();        
         services.AddSingleton<ILastReportService, LastReportService>();
+
         services.AddScoped<IReportingService, ReportingService>();
         services.AddScoped<IReportingRepository, ReportingRepository>();
 

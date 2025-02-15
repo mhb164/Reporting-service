@@ -39,7 +39,7 @@ public class ErrorResponse : IResult
     internal static ErrorResponse Generate<T>(ServiceResult<T> result)
     {
         if (result.Code == ServiceResultCode.InternalError)
-            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result}. Please check by tracking-Id.");
+            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result.Message} Please check by tracking-Id.");
 
         return new ErrorResponse((int)result.Code, result.Message);
     }
@@ -47,7 +47,7 @@ public class ErrorResponse : IResult
     internal static ErrorResponse Generate(ServiceResult result)
     {
         if (result.Code == ServiceResultCode.InternalError)
-            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result}. Please check by tracking-Id.");
+            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result.Message} Please check by tracking-Id.");
 
         return new ErrorResponse((int)result.Code, result.Message);
     }
