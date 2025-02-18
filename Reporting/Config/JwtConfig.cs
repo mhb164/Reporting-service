@@ -1,6 +1,6 @@
 ﻿using Microsoft.IdentityModel.Tokens;
 
-namespace Tizpusoft.Reporting.Auth;
+namespace Tizpusoft.Reporting.Config;
 
 public class JwtConfig
 {
@@ -10,9 +10,11 @@ public class JwtConfig
 
     public JwtConfig(string? issuer, string? secret, IEnumerable<string>? validAudiences)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(issuer, nameof(issuer));
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(secret, nameof(secret));
+        ArgumentException.ThrowIfNullOrWhiteSpace(issuer, nameof(issuer));
+        ArgumentException.ThrowIfNullOrWhiteSpace(secret, nameof(secret));
         ArgumentNullException.ThrowIfNull(validAudiences, nameof(validAudiences));
+        if (!validAudiences.Any())
+            throw new ArgumentException("valid audiences is empty!", nameof(validAudiences));
 
         Issuer = issuer.Trim();
         var jwtSecretBytes = System.Text.Encoding.UTF8.GetBytes(secret.Trim());

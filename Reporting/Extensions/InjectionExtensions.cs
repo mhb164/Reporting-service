@@ -1,20 +1,19 @@
-﻿
-using Microsoft.Extensions.Configuration;
-using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Options;
-using Tizpusoft.Reporting.Interfaces;
+﻿using Tizpusoft.Reporting.Interfaces;
 using Tizpusoft.Reporting.Middleware;
 using Tizpusoft.Reporting.Options;
 using Tizpusoft.Reporting.Repositories;
-using static System.Formats.Asn1.AsnWriter;
 
 namespace Tizpusoft.Reporting;
 
 public static class InjectionExtensions
 {
     public static IServiceCollection ProvideServices(
-         this IServiceCollection services, ConfigurationManager configuration)
+         this IServiceCollection services, ConfigurationManager? configuration)
     {
+        services.AddSingleton(JwtOptions.ToModel(configuration?.GetSection(JwtOptions.ConfigName)?.Get<JwtOptions>()));
+        services.AddSingleton(ApiKeyAuthenticationOptions.ToModel(configuration?.GetSection(ApiKeyAuthenticationOptions.ConfigName)?.Get<List<ApiKeyAuthenticationOptions>>()));
+
+        services.AddCors();
         // Set the JSON serializer options
         services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
         {
@@ -23,13 +22,10 @@ public static class InjectionExtensions
             options.SerializerOptions.WriteIndented = true;
         });
 
-        ConfigureReportingDbContext(services, configuration);
+        ConfigureDbContext(services, configuration);
 
         services.AddScoped<IApiContext, ApiContext>();
         services.AddScoped<IUserContext, UserContext>();
-
-        services.AddSingleton(sp => sp.GetRequiredService<IOptions<List<ApiKeyAuthenticationOptions>>>().Value.Select(x => x.ToModel()));
-        services.AddSingleton(sp => sp.GetRequiredService<IOptions<JwtOptions>>().Value.ToModel());
 
         services.AddSingleton<IApiKeyAuthenticationService, ApiKeyAuthenticationService>();        
         services.AddSingleton<ILastReportService, LastReportService>();
@@ -40,15 +36,15 @@ public static class InjectionExtensions
         return services;
     }
 
-    private static void ConfigureReportingDbContext(IServiceCollection services, ConfigurationManager configuration)
+    private static void ConfigureDbContext(IServiceCollection services, ConfigurationManager? configuration)
     {
-        var options = configuration.GetSection(RepositoryOptions.ConfigName)?.Get<RepositoryOptions>();
+        var repositoryConfig = RepositoryOptions.ToModel(configuration?.GetSection(RepositoryOptions.ConfigName)?.Get<RepositoryOptions>());
 
-        if (options.Provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
+        if (repositoryConfig.Provider.Equals("SqlServer", StringComparison.OrdinalIgnoreCase))
             services.AddScoped<ReportingDbContext>(provider =>
             {
                 var logger = provider.GetRequiredService<ILogger<ReportingSqlContext>>();
-                return new ReportingSqlContext(logger, options.ConnectionString);
+                return new ReportingSqlContext(logger, repositoryConfig.ConnectionString);
             });
     }
 

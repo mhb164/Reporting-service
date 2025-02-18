@@ -3,6 +3,7 @@ using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using Tizpusoft.Reporting.Auth;
+using Tizpusoft.Reporting.Config;
 using Tizpusoft.Reporting.Interfaces;
 using Tizpusoft.Reporting.Model;
 

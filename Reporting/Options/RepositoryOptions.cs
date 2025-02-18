@@ -1,4 +1,6 @@
-﻿namespace Tizpusoft.Reporting.Options;
+﻿using Tizpusoft.Reporting.Config;
+
+namespace Tizpusoft.Reporting.Options;
 
 public class RepositoryOptions
 {
@@ -6,4 +8,11 @@ public class RepositoryOptions
 
     public string? Provider { get; set; }
     public string? ConnectionString { get; set; }
+
+    public static RepositoryConfig ToModel(RepositoryOptions? options)
+    {
+        ArgumentNullException.ThrowIfNull(options, nameof(options));
+
+        return new RepositoryConfig(options.Provider, options.ConnectionString);
+    }
 }

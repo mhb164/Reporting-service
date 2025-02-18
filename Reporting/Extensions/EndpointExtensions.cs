@@ -30,7 +30,12 @@ public static class EndpointExtensions
         {
             var info = new StringBuilder();
             info.AppendLine($"{Aid.ProductName} v{Aid.AppInformationalVersion} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
-            
+
+            if (httpContext?.Items["ClientName"] is string clientName)
+                info.AppendLine($" - Api Client '{clientName}' authenticated");
+            else
+                info.AppendLine($" - Unknown Api Client!");
+
             if (httpContext?.Items["ClientUser"] is ClientUser clientUser)
                 info.AppendLine($" - '{clientUser.Name}' authenticated {clientUser.IssuedAt:yyyy-MM-dd HH:mm:ss zzz} by {clientUser.Issuer}[{clientUser.Audience}] until {clientUser.ValidTo:yyyy-MM-dd HH:mm:ss zzz} ({clientUser.ValidTo - DateTime.UtcNow})");
             else

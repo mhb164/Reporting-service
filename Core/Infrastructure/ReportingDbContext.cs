@@ -1,7 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Logging;
 using Tizpusoft.Reporting.Model;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace Tizpusoft.Reporting;
 

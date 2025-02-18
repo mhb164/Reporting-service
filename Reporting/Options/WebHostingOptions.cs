@@ -1,4 +1,6 @@
-﻿namespace Tizpusoft.Reporting.Options;
+﻿using Tizpusoft.Reporting.Config;
+
+namespace Tizpusoft.Reporting.Options;
 
 public class WebHostingOptions
 {
@@ -7,4 +9,8 @@ public class WebHostingOptions
     public int? Port { get; set; }
     public int? SslPort { get; set; }
     public string? UrlPathPrefix { get; set; }
+
+    public static WebHostingConfig ToModel(WebHostingOptions? options)
+        => new WebHostingConfig(options?.Port, options?.SslPort, options?.UrlPathPrefix);
 }
+

@@ -1,4 +1,4 @@
-﻿using Tizpusoft.Reporting.Auth;
+﻿using Tizpusoft.Reporting.Config;
 
 namespace Tizpusoft.Reporting.Options;
 
@@ -10,6 +10,10 @@ public class JwtOptions
     public string? Secret { get; set; }
     public List<string>? ValidAudiences { get; set; }
 
-    public JwtConfig ToModel()
-        => new JwtConfig(Issuer, Secret, ValidAudiences);
+    public static JwtConfig ToModel(JwtOptions? options)
+    {
+        ArgumentNullException.ThrowIfNull(options, nameof(options));
+
+        return new JwtConfig(options.Issuer, options.Secret, options.ValidAudiences);
+    }
 }

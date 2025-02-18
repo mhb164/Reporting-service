@@ -1,5 +1,7 @@
-﻿using Serilog;
+﻿using Microsoft.Extensions.Options;
+using Serilog;
 using Serilog.Events;
+using Tizpusoft.Reporting.Config;
 using Tizpusoft.Reporting.Options;
 
 namespace Tizpusoft.Reporting;
@@ -42,14 +44,5 @@ public static class ConfigExtensions
             .CreateLogger();
 
         hostBuilder.UseSerilog();
-    }
-
-    public static IServiceCollection ProvideConfigs(this IServiceCollection services, IConfiguration configuration)
-    {
-        services.Configure<RepositoryOptions>(configuration.GetSection(RepositoryOptions.ConfigName));
-        services.Configure<List<ApiKeyAuthenticationOptions>>(configuration.GetSection(ApiKeyAuthenticationOptions.ConfigName));
-        services.Configure<JwtOptions>(configuration.GetSection(JwtOptions.ConfigName));
-
-        return services;
     }
 }

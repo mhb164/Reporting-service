@@ -13,4 +13,7 @@ public class ApiAuthentication
         Name = name.Trim();
         Key = key.Trim();
     }
+
+    public override string ToString()
+        => $"ApiClient[Name:{Name}][Key:{Key}]";
 }
