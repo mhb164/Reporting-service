@@ -48,13 +48,13 @@ public static class InjectionExtensions
             });
     }
 
-    public static IServiceProvider WarmUp(
+    public static async Task<IServiceProvider> WarmUp(
          this IServiceProvider services)
     {
         using (var scope = services.CreateScope())
         {
             var dbContext = scope.ServiceProvider.GetRequiredService<ReportingDbContext>();
-            dbContext.InitialAsync().Wait();
+            await dbContext.InitialAsync();
         }
 
         services.GetService<IApiKeyAuthenticationService>();
