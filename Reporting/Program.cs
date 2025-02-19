@@ -14,7 +14,7 @@ builder.WebHost.ConfigWebHost(hostingConfig);
 builder.Services.ProvideServices(builder.Configuration);
 
 var app = builder.Build();
-app.Services.WarmUp();
+await app.Services.WarmUp();
 app.Prepare();
 app.MapEndpoints();
 
