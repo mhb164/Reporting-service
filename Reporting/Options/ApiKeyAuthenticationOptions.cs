@@ -13,7 +13,8 @@ public class ApiKeyAuthenticationOptions
 
     public static IEnumerable<ApiAuthentication> ToModel(IEnumerable<ApiKeyAuthenticationOptions>? optionsSet)
     {
-        ArgumentNullException.ThrowIfNull(optionsSet, nameof(optionsSet));
+        if (optionsSet is null)
+            yield break;
 
         foreach (var options in optionsSet)
             yield return ToModel(options);
