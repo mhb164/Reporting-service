@@ -34,8 +34,7 @@ public class AuthMiddleware
         ((ApiContext)apiContext).Client = await GetApiClientAsync(context);
         context.Items[ClientApi.HttpContextKey] = apiContext.Client;
 
-        var accessToken = GetBearerToken(context);
-        ((UserContext)userContext).User = GetUser(accessToken);
+        ((UserContext)userContext).User = GetUser(context);
         context.Items[ClientUser.HttpContextKey] = userContext.User;
 
         var authMetadata = GetAuthMetadata(endpoint);
@@ -64,7 +63,7 @@ public class AuthMiddleware
         return new ClientApi(ip: clientIp, name: clientApiName);
     }
 
-    public string? GetClientIp(HttpContext httpContext)
+    public static string? GetClientIp(HttpContext httpContext)
     {
         // Check if the request has the X-Forwarded-For header
         if (httpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedHeader))
@@ -96,8 +95,10 @@ public class AuthMiddleware
         return (string?)authHeader[BearerAuthorizationStart.Length..].Trim();
     }
 
-    public ClientUser? GetUser(string? accessToken)
+    public ClientUser? GetUser(HttpContext context)
     {
+        var accessToken = GetBearerToken(context);
+
         if (string.IsNullOrWhiteSpace(accessToken))
             return default;
 
