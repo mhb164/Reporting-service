@@ -3,6 +3,7 @@
 public class UserPermit
 {
     public const string Separator = ":";
+    public static readonly string[] SeparatorArray = new string[] { Separator };
     public const string PermitsSeparator = ",";
     public static readonly string[] PermitsSeparatorArray = new string[] { PermitsSeparator };
     public const string ClaimTypePrefix = "PERMIT#";
@@ -34,18 +35,18 @@ public class UserPermit
             string.IsNullOrWhiteSpace(permitsAsText))
             return default;
 
-        if (!claimType.StartsWith(ClaimTypePrefix))
+        if (!claimType!.StartsWith(ClaimTypePrefix))
             return default;
 
-        var splited = claimType.Substring(ClaimTypePrefix.Length).Split(PermitsSeparatorArray, StringSplitOptions.RemoveEmptyEntries);
-        if (splited.Length != 2)
+        var segments = claimType.Substring(ClaimTypePrefix.Length).Split(SeparatorArray, StringSplitOptions.RemoveEmptyEntries);
+        if (segments.Length != 2)
             return default;
 
-        if (string.IsNullOrWhiteSpace(splited[0]) || string.IsNullOrWhiteSpace(splited[1]))
+        if (string.IsNullOrWhiteSpace(segments[0]) || string.IsNullOrWhiteSpace(segments[1]))
             return default;
 
         var permits = permitsAsText.Split(PermitsSeparatorArray, StringSplitOptions.RemoveEmptyEntries);
 
-        return new UserPermit(domain: splited[0], scope: splited[1], permits);
+        return new UserPermit(domain: segments[0], scope: segments[1], permits);
     }
 }
