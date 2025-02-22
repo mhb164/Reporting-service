@@ -114,13 +114,13 @@ public class AuthMiddleware
             if (string.IsNullOrWhiteSpace(name))
                 return default;
 
-            var jti = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value;
-            if (string.IsNullOrWhiteSpace(jti))
+
+            if (string.IsNullOrWhiteSpace(jwtSecurityToken.Id))
                 return default;
 
             var permits = new UserPermits(ReadPermits(jwtSecurityToken.Claims));
 
-            return new ClientUser(tokenId: jti, name: name,
+            return new ClientUser(tokenId: jwtSecurityToken.Id, name: name,
                                   audience: jwtSecurityToken.Audiences.FirstOrDefault(),
                                   issuer: jwtSecurityToken.Issuer,
                                   issuedAt: jwtSecurityToken.IssuedAt,
