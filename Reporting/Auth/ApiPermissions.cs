@@ -1,6 +1,4 @@
-﻿using Tizpusoft.Auth;
-
-namespace Tizpusoft.Reporting;
+﻿namespace Tizpusoft.Auth;
 
 public static class ApiPermissions
 {

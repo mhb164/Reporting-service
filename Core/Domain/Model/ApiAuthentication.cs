@@ -7,8 +7,8 @@ public class ApiAuthentication
 
     public ApiAuthentication(string? name, string? key)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(name, nameof(name));
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(key, nameof(key));
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(key);
 
         Name = name.Trim();
         Key = key.Trim();

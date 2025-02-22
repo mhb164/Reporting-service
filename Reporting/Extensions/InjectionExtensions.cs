@@ -1,6 +1,5 @@
 ﻿using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Interfaces;
-using Tizpusoft.Reporting.Middleware;
 using Tizpusoft.Reporting.Options;
 using Tizpusoft.Reporting.Repositories;
 

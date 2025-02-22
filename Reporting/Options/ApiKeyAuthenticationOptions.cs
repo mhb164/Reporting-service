@@ -22,7 +22,7 @@ public class ApiKeyAuthenticationOptions
 
     public static ApiAuthentication ToModel(ApiKeyAuthenticationOptions options)
     {
-        ArgumentNullException.ThrowIfNull(options, nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
 
         return new ApiAuthentication(options.Name, options.ApiKey);
     }

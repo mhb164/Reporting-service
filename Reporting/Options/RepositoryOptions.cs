@@ -11,7 +11,7 @@ public class RepositoryOptions
 
     public static RepositoryConfig ToModel(RepositoryOptions? options)
     {
-        ArgumentNullException.ThrowIfNull(options, nameof(options));
+        ArgumentNullException.ThrowIfNull(options);
 
         return new RepositoryConfig(options.Provider, options.ConnectionString);
     }

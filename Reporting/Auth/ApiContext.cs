@@ -1,6 +1,4 @@
-﻿using Tizpusoft.Auth;
-
-namespace Tizpusoft.Reporting.Middleware;
+﻿namespace Tizpusoft.Auth;
 
 public class ApiContext: IApiContext
 {

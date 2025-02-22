@@ -1,12 +1,10 @@
-﻿using Microsoft.IdentityModel.Tokens;
-using Microsoft.Net.Http.Headers;
+﻿using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Config;
 using Tizpusoft.Reporting.Interfaces;
 
-namespace Tizpusoft.Reporting.Middleware;
+namespace Tizpusoft.Auth;
 
 public class AuthMiddleware
 {

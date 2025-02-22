@@ -7,8 +7,8 @@ public class RepositoryConfig
 
     public RepositoryConfig(string? provider, string? connectionString)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(provider, nameof(provider));
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(connectionString, nameof(connectionString));
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(provider);
+        ArgumentNullException.ThrowIfNullOrWhiteSpace(connectionString);
 
         Provider = provider.Trim();
         ConnectionString = connectionString;
