@@ -1,8 +1,7 @@
 ﻿using System.Text;
-using Tizpusoft.Reporting.Auth;
+using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Dto;
 using Tizpusoft.Reporting.Interfaces;
-using Tizpusoft.Reporting.Model;
 
 namespace Tizpusoft.Reporting;
 
@@ -31,22 +30,22 @@ public static class EndpointExtensions
             var info = new StringBuilder();
             info.AppendLine($"{Aid.ProductName} v{Aid.AppInformationalVersion} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
 
-            if (httpContext?.Items["ClientName"] is string clientName)
-                info.AppendLine($" - Api Client '{clientName}' authenticated");
+            if (httpContext?.Items[ClientApi.HttpContextKey] is ClientApi clientApi)
+                info.AppendLine($" - Api Client '{clientApi}' authenticated");
             else
                 info.AppendLine($" - Unknown Api Client!");
 
-            if (httpContext?.Items["ClientUser"] is ClientUser clientUser)
+            if (httpContext?.Items[ClientUser.HttpContextKey] is ClientUser clientUser)
                 info.AppendLine($" - '{clientUser.Name}' authenticated {clientUser.IssuedAt:yyyy-MM-dd HH:mm:ss zzz} by {clientUser.Issuer}[{clientUser.Audience}] until {clientUser.ValidTo:yyyy-MM-dd HH:mm:ss zzz} ({clientUser.ValidTo - DateTime.UtcNow})");
             else
                 info.AppendLine($" - Unknown User!");
 
             return Results.Content(info.ToString(), "text/plain");
-        }).WithMetadata(new PublicMetadata());
+        }).WithMetadata(ApiPermissions.Public);
 
         endpoints.MapGet("/time",
             () => Results.Json(new { Time = DateTime.Now }))
-            .WithMetadata(new PublicMetadata());
+            .WithMetadata(ApiPermissions.Public);
 
         endpoints.MapGet("/latest", static async (HttpContext httpContext, ILastReportService service, CancellationToken cancellationToken) =>
         {
@@ -75,30 +74,22 @@ public static class EndpointExtensions
             }
 
             return Results.Content(report.ToString(), "text/plain");
-        }).WithMetadata(new PublicMetadata());
+        }).WithMetadata(ApiPermissions.Public);
         return endpoints;
     }
 
     public static IEndpointRouteBuilder MapRegisterEndpoints(this IEndpointRouteBuilder endpoints)
     {
-        endpoints.MapPost("/api/register", 
-            static async (RegisterReportRequest request, IReportingService service, CancellationToken cancellationToken) 
+        endpoints.MapPost("/api/register",
+            static async (RegisterReportRequest request, IReportingService service, CancellationToken cancellationToken)
                 => Map(await service.RegisterAsync(request, cancellationToken)))
-            .WithMetadata(new PrivateMetadata(apiClientPermitted: true));
+            .WithMetadata(ApiPermissions.ApiClient);
 
-        endpoints.MapGet("/api/latest", 
+        endpoints.MapGet("/api/latest",
                 async (ILastReportService service, CancellationToken cancellationToken)
                     => Map(await service.GetLatestDetailsAsync()))
-            .WithMetadata(new PrivateMetadata(apiClientPermitted: true));
+            .WithMetadata(ApiPermissions.ApiClient);
 
         return endpoints;
-    }
-
-    private static async Task<string?> GetApiClientNameAsync(HttpContext httpContext, IApiKeyAuthenticationService service)
-    {
-        if (!httpContext.Request.Headers.TryGetValue("X-API-KEY", out var apiKeyHeaderValue))
-            return null;
-
-        return await service.GetApiClientNameAsync(apiKeyHeaderValue);
     }
 }

@@ -1,5 +1,4 @@
-﻿using Tizpusoft.Reporting.Interfaces;
-using Tizpusoft.Reporting.Model;
+﻿using Tizpusoft.Auth;
 
 namespace Tizpusoft.Reporting.Middleware;
 

@@ -1,11 +1,10 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.IdentityModel.Tokens;
+﻿using Microsoft.IdentityModel.Tokens;
 using Microsoft.Net.Http.Headers;
 using System.IdentityModel.Tokens.Jwt;
-using Tizpusoft.Reporting.Auth;
+using System.Security.Claims;
+using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Config;
 using Tizpusoft.Reporting.Interfaces;
-using Tizpusoft.Reporting.Model;
 
 namespace Tizpusoft.Reporting.Middleware;
 
@@ -34,40 +33,57 @@ public class AuthMiddleware
             return;
         }
 
-        var apiKey = context.Request.Headers[ApiKeyHeaderNames].FirstOrDefault();
-        apiContext.ClientName = await _apiKeyAuthenticationService.GetApiClientNameAsync(apiKey);
-        context.Items["ClientName"] = apiContext.ClientName;
+        ((ApiContext)apiContext).Client = await GetApiClientAsync(context);
+        context.Items[ClientApi.HttpContextKey] = apiContext.Client;
 
         var accessToken = GetBearerToken(context);
         ((UserContext)userContext).User = GetUser(accessToken);
-        context.Items["ClientUser"] = userContext.User;
+        context.Items[ClientUser.HttpContextKey] = userContext.User;
 
         var authMetadata = GetAuthMetadata(endpoint);
 
-        if (authMetadata is PublicMetadata || authMetadata is not PrivateMetadata privateAuth)
+        if (!authMetadata.HasAccess(userContext.User?.Permits, apiContext.Client))
         {
-            await _next(context);
+            context.Response.StatusCode = StatusCodes.Status401Unauthorized;
             return;
         }
 
-        if (privateAuth.ApiClientPermitted && !string.IsNullOrWhiteSpace(apiContext.ClientName))
+        await _next(context);
+    }
+
+    private async Task<ClientApi?> GetApiClientAsync(HttpContext httpContext)
+    {
+        var clientIp = GetClientIp(httpContext);
+        if (string.IsNullOrWhiteSpace(clientIp))
+            return null;
+
+        var apiKey = httpContext.Request.Headers[ApiKeyHeaderNames].FirstOrDefault();
+
+        var clientApiName = await _apiKeyAuthenticationService.GetApiClientNameAsync(apiKey);
+        if (string.IsNullOrWhiteSpace(clientApiName))
+            return null;
+
+        return new ClientApi(ip: clientIp, name: clientApiName);
+    }
+
+    public string? GetClientIp(HttpContext httpContext)
+    {
+        // Check if the request has the X-Forwarded-For header
+        if (httpContext.Request.Headers.TryGetValue("X-Forwarded-For", out var forwardedHeader))
         {
-            await _next(context);
-            return;
+            var ipList = forwardedHeader.ToString().Split(',');
+            if (ipList.Length > 0)
+            {
+                return ipList[0].Trim();  // First IP in the list is the real client IP
+            }
         }
 
-        if (userContext.User is not null)
-        {
-            await _next(context);
-            return;
-        }
-
-        context.Response.StatusCode = StatusCodes.Status401Unauthorized;
-        return;
+        // Fallback to RemoteIpAddress if no proxy is used
+        return httpContext.Connection.RemoteIpAddress?.ToString();
     }
 
     private static AuthMetadata GetAuthMetadata(Endpoint endpoint)
-        => endpoint.Metadata?.GetMetadata<AuthMetadata>() ?? PrivateMetadata.Limited;
+       => endpoint.Metadata?.GetMetadata<AuthMetadata>() ?? ApiPermissions.TokenIsEnough;
 
     private static string? GetBearerToken(HttpContext context)
     {
@@ -82,40 +98,53 @@ public class AuthMiddleware
         return (string?)authHeader[BearerAuthorizationStart.Length..].Trim();
     }
 
-    private ClientUser? GetUser(string? accessToken)
+    public ClientUser? GetUser(string? accessToken)
     {
         if (string.IsNullOrWhiteSpace(accessToken))
-            return null;
-
-        var validationParameters = new TokenValidationParameters
-        {
-            ValidateIssuer = true,
-            ValidIssuer = _jwt.Issuer,
-            ValidateAudience = true,
-            ValidAudiences = _jwt.ValidAudiences,
-            ValidateIssuerSigningKey = true,
-            IssuerSigningKeys = [_jwt.SecretKey],
-            ValidateLifetime = true
-        };
+            return default;
 
         var tokenHandler = new JwtSecurityTokenHandler();
         try
         {
-            tokenHandler.ValidateToken(accessToken, validationParameters, out var validatedToken);
+            tokenHandler.ValidateToken(accessToken, _jwt.ValidationParameters, out var validatedToken);
             var jwtSecurityToken = validatedToken as JwtSecurityToken;
 
             if (jwtSecurityToken == null)
-                return null;
+                return default;
 
-            return new ClientUser(name: jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name)?.Value,
+            var name = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Name)?.Value;
+            if (string.IsNullOrWhiteSpace(name))
+                return default;
+
+            var jti = jwtSecurityToken.Claims.FirstOrDefault(x => x.Type == JwtRegisteredClaimNames.Jti)?.Value;
+            if (string.IsNullOrWhiteSpace(jti))
+                return default;
+
+            var permits = new UserPermits(ReadPermits(jwtSecurityToken.Claims));
+
+            return new ClientUser(tokenId: jti, name: name,
                                   audience: jwtSecurityToken.Audiences.FirstOrDefault(),
                                   issuer: jwtSecurityToken.Issuer,
                                   issuedAt: jwtSecurityToken.IssuedAt,
-                                  validTo: jwtSecurityToken.ValidTo);
+                                  validTo: jwtSecurityToken.ValidTo,
+                                  permits);
         }
         catch
         {
-            return null;
+            return default;
+        }
+    }
+
+    private static IEnumerable<UserPermit> ReadPermits(IEnumerable<Claim> claims)
+    {
+        foreach (var claim in claims)
+        {
+            var permit = UserPermit.FromClaim(claim.Type, claim.Value);
+
+            if (permit is null)
+                continue;
+
+            yield return permit;
         }
     }
 }

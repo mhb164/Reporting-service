@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Dto;
 using Tizpusoft.Reporting.Interfaces;
 using Tizpusoft.Reporting.Model;
@@ -21,7 +22,7 @@ public class ReportingService : IReportingService
 
     public async Task<ServiceResult> RegisterAsync(RegisterReportRequest request, CancellationToken cancellationToken)
     {
-        if (string.IsNullOrWhiteSpace(_apiContext?.ClientName))
+        if (string.IsNullOrWhiteSpace(_apiContext?.Client?.Name))
             return ServiceResult.BadRequest("Reporter is not set!");
 
         if (string.IsNullOrWhiteSpace(request.Source))
@@ -41,7 +42,7 @@ public class ReportingService : IReportingService
         //_unitOfWork.BeginTransaction();
         try
         {
-            var reporter = await _repository.GetReporterAsync(_apiContext.ClientName, true);
+            var reporter = await _repository.GetReporterAsync(_apiContext.Client.Name, true);
             var sourceSection = await _repository.GetSourceSectionAsync(request.Source, request.Section, true);
 
             var details = new ReportDetail()

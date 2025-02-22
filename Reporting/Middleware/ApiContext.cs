@@ -1,8 +1,8 @@
-﻿using Tizpusoft.Reporting.Interfaces;
+﻿using Tizpusoft.Auth;
 
 namespace Tizpusoft.Reporting.Middleware;
 
 public class ApiContext: IApiContext
 {
-    public string? ClientName { get; set; }
+    public ClientApi? Client { get; set; }
 }
