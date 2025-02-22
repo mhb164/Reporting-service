@@ -1,4 +1,4 @@
-﻿namespace Tizpusoft.Reporting.Interfaces;
+﻿namespace Tizpusoft.Auth;
 
 public interface IApiKeyAuthenticationService
 {

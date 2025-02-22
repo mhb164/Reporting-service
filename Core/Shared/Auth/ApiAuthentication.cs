@@ -1,4 +1,4 @@
-﻿namespace Tizpusoft.Reporting.Model;
+﻿namespace Tizpusoft.Auth;
 
 public class ApiAuthentication
 {
@@ -7,8 +7,10 @@ public class ApiAuthentication
 
     public ApiAuthentication(string? name, string? key)
     {
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(name);
-        ArgumentNullException.ThrowIfNullOrWhiteSpace(key);
+        if (string.IsNullOrWhiteSpace(key))
+            throw new ArgumentException($"{nameof(key)} is required!", nameof(key));
+        if (string.IsNullOrWhiteSpace(name))
+            throw new ArgumentException($"{nameof(name)} is required!", nameof(name));
 
         Name = name.Trim();
         Key = key.Trim();

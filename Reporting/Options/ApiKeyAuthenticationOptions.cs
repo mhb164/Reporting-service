@@ -1,5 +1,4 @@
-﻿using Microsoft.Extensions.Options;
-using Tizpusoft.Reporting.Model;
+﻿using Tizpusoft.Auth;
 
 namespace Tizpusoft.Reporting.Options;
 
