@@ -1,21 +1,23 @@
-﻿namespace Tizpusoft.Reporting.Config;
+﻿namespace Shared.Config;
 
 public class WebHostingConfig
 {
-    public const string DefaultUrlPathPrefix = "Reporting";
-
+    public readonly bool Enabled;
     public readonly int Port;
     public readonly int SslPort;
     public readonly string UrlPathPrefix;
 
-    public WebHostingConfig(int? port, int? sslPort, string? urlPathPrefix)
+    public WebHostingConfig(bool? enabled, int? port, int? sslPort, string? urlPathPrefix)
     {
+        if(urlPathPrefix is null)
+            throw new ArgumentNullException(nameof(urlPathPrefix));
+
+        Enabled = enabled ?? true;
         Port = port ?? 80;
         SslPort = sslPort ?? 443;
-        UrlPathPrefix = urlPathPrefix ?? DefaultUrlPathPrefix;
+        UrlPathPrefix = urlPathPrefix;
     }
 
     public override string ToString()
         => $"WebHosting:[Port:{Port}][SslPort:{SslPort}][UrlPathPrefix:{UrlPathPrefix}]";
 }
-

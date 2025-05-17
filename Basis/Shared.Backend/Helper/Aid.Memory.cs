@@ -1,6 +1,4 @@
-﻿using System.Diagnostics;
-
-namespace Tizpusoft;
+﻿namespace Shared;
 
 public static partial class Aid
 {

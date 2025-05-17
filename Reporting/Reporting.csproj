@@ -3,6 +3,8 @@
 	<PropertyGroup>
 		<AssemblyName>Reporting</AssemblyName>
 		<AssemblyTitle>$(AssemblyName) $(AssemblyTitleSufix)</AssemblyTitle>
+
+		<Trademark>PrivateProperty_Main</Trademark>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -17,6 +19,9 @@
 	</ItemGroup>
 
 	<ItemGroup>
+	  <ProjectReference Include="..\Basis\Common\Common.csproj" />
+	  <ProjectReference Include="..\Basis\Shared.Backend\Shared.Backend.csproj" />
+	  <ProjectReference Include="..\Basis\Shared\Shared.csproj" />
 	  <ProjectReference Include="..\Core\BusinessLogic\BusinessLogic.csproj" />
 	  <ProjectReference Include="..\Core\Domain\Domain.csproj" />
 	  <ProjectReference Include="..\Core\Infrastructure.Sql\Infrastructure.Sql.csproj" />

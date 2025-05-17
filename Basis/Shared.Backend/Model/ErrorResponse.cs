@@ -1,7 +1,4 @@
-﻿using System.Net;
-using System.Text.Json;
-
-namespace Tizpusoft.Reporting;
+﻿namespace Shared.Model;
 
 public class ErrorResponse : IResult
 {
@@ -36,18 +33,18 @@ public class ErrorResponse : IResult
         return new ErrorResponse(Guid.NewGuid(), (int)HttpStatusCode.InternalServerError, "An unexpected error occurred. Please check by tracking-Id.");
     }
 
-    internal static ErrorResponse Generate<T>(ServiceResult<T> result)
+    public static ErrorResponse Generate<T>(ServiceResult<T> result)
     {
         if (result.Code == ServiceResultCode.InternalError)
-            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result.Message} Please check by tracking-Id.");
+            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result}. Please check by tracking-Id.");
 
         return new ErrorResponse((int)result.Code, result.Message);
     }
 
-    internal static ErrorResponse Generate(ServiceResult result)
+    public static ErrorResponse Generate(ServiceResult result)
     {
         if (result.Code == ServiceResultCode.InternalError)
-            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result.Message} Please check by tracking-Id.");
+            return new ErrorResponse(result.TrackingId, (int)HttpStatusCode.InternalServerError, $"{result}. Please check by tracking-Id.");
 
         return new ErrorResponse((int)result.Code, result.Message);
     }

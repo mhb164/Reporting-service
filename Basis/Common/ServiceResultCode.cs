@@ -1,8 +1,11 @@
-﻿namespace Tizpusoft;
+﻿namespace Common;
 
 public enum ServiceResultCode
 {
+    Unknown = 0,
+
     Success = 200,
+    NoContent = 204,
     BadRequest = 400,
     Unauthorized = 401,
     Forbidden = 403,

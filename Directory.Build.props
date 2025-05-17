@@ -5,7 +5,7 @@
 		<Nullable>enable</Nullable>
 		<ImplicitUsings>enable</ImplicitUsings>
 
-		<VersionPrefix>1.0.19</VersionPrefix>
+		<VersionPrefix>1.2</VersionPrefix>
 		<VersionSufix>beta</VersionSufix>
 
 		<Version>$(VersionPrefix)</Version>
@@ -15,11 +15,14 @@
 		<IncludeSourceRevisionInInformationalVersion>false</IncludeSourceRevisionInInformationalVersion>
 
 		<Authors></Authors>
-		<CompanyName>Tizpusoft</CompanyName>
-		<Copyright>© $(CompanyName) $([System.DateTime]::UtcNow.Year) - All Rights Reserved</Copyright>
+		<Company>Tizpusoft</Company>
+		<Copyright>© $(Company) $([System.DateTime]::UtcNow.Year) - All Rights Reserved</Copyright>
 		<AssemblyTitleSufix>$([System.DateTime]::UtcNow.ToString(yyyy-MM-dd HH:mm:ss zzz))</AssemblyTitleSufix>
 		<Product>Tizpusoft Reporting</Product>
 
 		<RootNamespace>Tizpusoft.Reporting</RootNamespace>
+
+		<EFCoreVersion>9.0.3</EFCoreVersion>
+		<CommonPackageVersion>9.0.3</CommonPackageVersion >
 	</PropertyGroup>
 </Project>

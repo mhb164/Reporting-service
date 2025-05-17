@@ -1,0 +1,9 @@
+﻿global using System;
+global using Common;
+global using Shared;
+global using Shared.Model;
+global using Tizpusoft;
+global using Tizpusoft.Reporting;
+global using Tizpusoft.Reporting.Options;
+global using Shared.Config;
+global using Shared.Extensions;

@@ -1,8 +1,8 @@
-﻿namespace Tizpusoft.Reporting.Middleware;
+﻿namespace Shared.Middleware;
 
 public class ExceptionMiddleware
 {
-    private readonly ILogger? _logger;
+    private readonly Microsoft.Extensions.Logging.ILogger? _logger;
     private readonly RequestDelegate _next;
 
     public ExceptionMiddleware(ILogger<ExceptionMiddleware>? logger, RequestDelegate next)
@@ -13,6 +13,7 @@ public class ExceptionMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
+        var endpoint = context.GetEndpoint();
         try
         {
             await _next(context); // Process request

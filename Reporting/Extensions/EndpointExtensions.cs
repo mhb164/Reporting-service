@@ -27,20 +27,7 @@ public static class EndpointExtensions
     {
         endpoints.MapGet("/info", (HttpContext httpContext) =>
         {
-            var info = new StringBuilder();
-            info.AppendLine($"{Aid.ProductName} v{Aid.AppInformationalVersion} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
-
-            if (httpContext?.Items[ClientApi.HttpContextKey] is ClientApi clientApi)
-                info.AppendLine($" - Api Client '{clientApi}' authenticated");
-            else
-                info.AppendLine($" - Unknown Api Client!");
-
-            if (httpContext?.Items[ClientUser.HttpContextKey] is ClientUser clientUser)
-                info.AppendLine($" - '{clientUser.Name}' authenticated {clientUser.IssuedAt:yyyy-MM-dd HH:mm:ss zzz} by {clientUser.Issuer}[{clientUser.Audience}] until {clientUser.ValidTo:yyyy-MM-dd HH:mm:ss zzz} ({clientUser.ValidTo - DateTime.UtcNow})");
-            else
-                info.AppendLine($" - Unknown User!");
-
-            return Results.Content(info.ToString(), "text/plain");
+            return Results.Ok(CreateContextOverview(httpContext));
         }).WithMetadata(ApiPermissions.Public);
 
         endpoints.MapGet("/time",
@@ -52,7 +39,7 @@ public static class EndpointExtensions
             var latestDetails = await service.GetLatestDetailsAsync();
 
             var report = new StringBuilder();
-            report.AppendLine($"{Aid.ProductName} v{Aid.AppInformationalVersion} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
+            report.AppendLine($"{Aid.AppInfo} {DateTime.Now:yyyy-MM-dd HH:mm:ss.fff zzz} for {httpContext?.Connection?.RemoteIpAddress}");
             report.AppendLine($"System Memory: {Aid.GetSystemMemoryText()}, Process Usage: {Aid.GetProcessUsageText()}");
             if (httpContext?.Items["ClientUser"] is ClientUser clientUser)
                 report.AppendLine($" - '{clientUser.Name}' authenticated {clientUser.IssuedAt:yyyy-MM-dd HH:mm:ss zzz} by {clientUser.Issuer}[{clientUser.Audience}] until {clientUser.ValidTo:yyyy-MM-dd HH:mm:ss zzz} ({clientUser.ValidTo - DateTime.UtcNow})");
@@ -76,6 +63,21 @@ public static class EndpointExtensions
             return Results.Content(report.ToString(), "text/plain");
         }).WithMetadata(ApiPermissions.Public);
         return endpoints;
+    }
+
+    private static ContextOverview CreateContextOverview(HttpContext httpContext)
+    {
+        var authenticated = false;
+        if (httpContext?.Items[ClientApi.HttpContextKey] is ClientApi clientApi)
+            authenticated = true;
+        if (httpContext?.Items[ClientUser.HttpContextKey] is ClientUser clientUser)
+            authenticated = true;
+
+        var contextOverview = new ContextOverview(Aid.AppInfo.ProductName, Aid.AppInfo.InformationalVersion,
+            clientIpAddress: httpContext?.Connection?.RemoteIpAddress?.ToString(),
+            authenticated);
+
+        return contextOverview;
     }
 
     public static IEndpointRouteBuilder MapRegisterEndpoints(this IEndpointRouteBuilder endpoints)

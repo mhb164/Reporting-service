@@ -1,4 +1,4 @@
-﻿namespace Tizpusoft;
+﻿namespace Common;
 
 public class ServiceResult<T>
 {
@@ -10,6 +10,7 @@ public class ServiceResult<T>
     public ServiceResult()
     {
         Code = ServiceResultCode.NotImplemented;
+        Message = Code.ToString();
     }
 
     public ServiceResult<T> Success(T value)
@@ -24,7 +25,10 @@ public class ServiceResult<T>
         TrackingId = trackingId;
         Value = default;
         Code = ServiceResultCode.InternalError;
-        Message = message;
+        if (string.IsNullOrWhiteSpace(message))
+            Message = Code.ToString();
+        else
+            Message = message;
 
         return this;
     }
@@ -33,17 +37,24 @@ public class ServiceResult<T>
     {
         Value = default;
         Code = code;
-        Message = message;
+        if (string.IsNullOrWhiteSpace(message))
+            Message = Code.ToString();
+        else
+            Message = message;
 
         return this;
     }
 
+    public bool IsSuccess => Code == ServiceResultCode.Success;
+    public bool IsFailed => Code != ServiceResultCode.Success;
+
+    public ServiceResult<T> NoContent(string message = null) => Failed(ServiceResultCode.NoContent, message);
     public ServiceResult<T> BadRequest(string message) => Failed(ServiceResultCode.BadRequest, message);
     public ServiceResult<T> Unauthorized(string message) => Failed(ServiceResultCode.Unauthorized, message);
     public ServiceResult<T> Forbidden(string message) => Failed(ServiceResultCode.Forbidden, message);
     public ServiceResult<T> NotFound(string message) => Failed(ServiceResultCode.NotFound, message);
     public ServiceResult<T> Conflict(string message) => Failed(ServiceResultCode.Conflict, message);
     public ServiceResult<T> NotImplemented(string message) => Failed(ServiceResultCode.NotImplemented, message);
-    public ServiceResult<T> ServiceUnavailable(string message) => Failed(ServiceResultCode.ServiceUnavailable, message);
+    public ServiceResult<T> ServiceUnavailable(string message = null) => Failed(ServiceResultCode.ServiceUnavailable, message);
 
 }

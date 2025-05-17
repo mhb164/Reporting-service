@@ -1,0 +1,22 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+	<PropertyGroup>
+		<AssemblyName>Tizpusoft.Shared.Backend</AssemblyName>
+		<AssemblyTitle>$(AssemblyName) $(AssemblyTitleSufix)</AssemblyTitle>
+		<RootNamespace>Shared</RootNamespace>
+
+		<Trademark>PrivateProperty</Trademark>
+	</PropertyGroup>
+
+	<ItemGroup>
+		<FrameworkReference Include="Microsoft.AspNetCore.App" />
+		<PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="$(CommonPackageVersion)" />
+		<PackageReference Include="Microsoft.Extensions.Hosting.WindowsServices" Version="$(CommonPackageVersion)" />
+	</ItemGroup>
+
+	<ItemGroup>
+		<ProjectReference Include="..\Common\Common.csproj" />
+		<ProjectReference Include="..\Shared\Shared.csproj" />
+	</ItemGroup>
+
+</Project>

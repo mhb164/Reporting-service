@@ -1,24 +1,33 @@
-using Tizpusoft;
-using Tizpusoft.Reporting;
-using Tizpusoft.Reporting.Options;
-
 Aid.ConfigureAppStart();
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Configuration.Load(builder.Environment);
-builder.Host.ConfigureLogger(builder.Configuration);
-Serilog.Log.Information("{ProductName} v{AppInformationalVersion} started.", Aid.ProductName, Aid.AppInformationalVersion);
 
-var hostingConfig = WebHostingOptions.ToModel(builder.Configuration?.GetSection(WebHostingOptions.ConfigName)?.Get<WebHostingOptions>());
-builder.WebHost.ConfigWebHost(hostingConfig);
-builder.Services.ProvideServices(builder.Configuration);
+var logger = builder.Host.ConfigureLogger(builder.Configuration);
+logger.LogInformation("{AppInfo} started.", Aid.AppInfo);
+try
+{
+    var hostingConfig = WebHostingOptions.ToModel(builder.Configuration?.GetSection(WebHostingOptions.ConfigName)?.Get<WebHostingOptions>());
+    builder.WebHost.ConfigWebHost(logger, hostingConfig);
 
-var app = builder.Build();
-await app.Services.WarmUp();
-app.Prepare();
-app.MapEndpoints();
+    builder.Services.ProvideServices(logger, builder.Configuration);
 
-await app.RunAsync();
+    var app = builder.Build();
+    await app.Services.WarmUp(logger);
+    app.PrepareDefaults(logger);
+    app.UseMiddleware<Tizpusoft.Auth.AuthMiddleware>();
+    app.MapEndpoints();
+    await app.RunAsync();
 
-Serilog.Log.Information("{ProductName} v{AppInformationalVersion} stopped.", Aid.ProductName, Aid.AppInformationalVersion);
-await Serilog.Log.CloseAndFlushAsync();
+    logger.LogInformation("{AppInfo} stopped.", Aid.AppInfo);
+}
+catch (Exception ex)
+{
+    logger.LogError(ex, "{AppInfo} exception.", Aid.AppInfo);
+}
+finally
+{
+    await builder.Host.FinalizeLoggerAsync();
+}
+
+

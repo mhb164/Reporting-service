@@ -1,6 +1,5 @@
 ﻿using Tizpusoft.Auth;
 using Tizpusoft.Reporting.Interfaces;
-using Tizpusoft.Reporting.Options;
 using Tizpusoft.Reporting.Repositories;
 
 namespace Tizpusoft.Reporting;
@@ -8,19 +7,12 @@ namespace Tizpusoft.Reporting;
 public static class InjectionExtensions
 {
     public static IServiceCollection ProvideServices(
-         this IServiceCollection services, ConfigurationManager? configuration)
+         this IServiceCollection services, ILogger? logger, ConfigurationManager? configuration)
     {
+        services.PrepareDefaults(logger);
+
         services.AddSingleton(JwtOptions.ToModel(configuration?.GetSection(JwtOptions.ConfigName)?.Get<JwtOptions>()));
         services.AddSingleton(ApiKeyAuthenticationOptions.ToModel(configuration?.GetSection(ApiKeyAuthenticationOptions.ConfigName)?.Get<List<ApiKeyAuthenticationOptions>>()));
-
-        services.AddCors();
-        // Set the JSON serializer options
-        services.Configure<Microsoft.AspNetCore.Http.Json.JsonOptions>(options =>
-        {
-            options.SerializerOptions.PropertyNameCaseInsensitive = false;
-            options.SerializerOptions.PropertyNamingPolicy = null;
-            options.SerializerOptions.WriteIndented = true;
-        });
 
         ConfigureDbContext(services, configuration);
 
@@ -49,7 +41,7 @@ public static class InjectionExtensions
     }
 
     public static async Task<IServiceProvider> WarmUp(
-         this IServiceProvider services)
+         this IServiceProvider services, ILogger? logger)
     {
         using (var scope = services.CreateScope())
         {
